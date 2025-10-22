@@ -27,7 +27,7 @@
     "id": 4,
     "nome": "The Cheddar",
     "descricao": "asd",
-    "preco": 15.9,
+    "preco": 16.9,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Cheddar.webp"
   },
@@ -35,7 +35,7 @@
     "id": 5,
     "nome": "The Egg",
     "descricao": "asd",
-    "preco": 15.9,
+    "preco": 16.9,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Egg.webp"
   },
@@ -43,7 +43,7 @@
     "id": 6,
     "nome": "The Bacon",
     "descricao": "asd",
-    "preco": 17.9,
+    "preco": 16.9,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Bacon.webp"
   },
@@ -147,7 +147,7 @@
     "id": 19,
     "nome": "The Maionese da Casa",
     "descricao": "",
-    "preco": 1.9,
+    "preco": 1.0,
     "categoria": "Molhos",
     "imageUrl": "images/The Maionese da Casa.webp"
   },
