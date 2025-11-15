@@ -186,7 +186,7 @@ header {
     display: flex;
     flex-direction: column;
     text-align: left;
-    justify-content: space-between; 
+    /* justify-content: space-between; <-- ESTA LINHA FOI REMOVIDA */
 }
 
 .item-details h3 {
@@ -670,10 +670,8 @@ header {
     .close-btn { display: block; }
     .mobile-cart-btn { display: block; }
 
-    /* * As regras para #menu-container, .menu-item, .menu-item img, e .item-details
-     * foram REMOVIDAS daqui.
-     *
-     * Agora, o mobile vai usar as regras principais (desktop),
-     * que já criam o grid de cards verticais com rolagem.
+    /*
+     * Conforme solicitado, as regras de layout dos itens do menu no mobile
+     * foram removidas para usar o padrão "desktop" (card vertical com rolagem).
     */
 }
