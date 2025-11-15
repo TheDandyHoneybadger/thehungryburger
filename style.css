@@ -176,7 +176,7 @@ header {
 .menu-item img {
     width: 100%;
     height: auto;
-    aspect-ratio: 1 / 1; /* AJUSTE: Alterado de 16/9 para 1/1 (quadrado) */
+    aspect-ratio: 1 / 1; 
     object-fit: cover;
 }
 
@@ -673,6 +673,7 @@ header {
         grid-template-columns: 1fr; 
         padding: 1rem;
         gap: 1rem;
+        padding-bottom: 90px; /* AJUSTE: Adiciona espaço para o botão flutuante */
     }
 
     .menu-item {
