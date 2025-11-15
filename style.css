@@ -186,7 +186,7 @@ header {
     display: flex;
     flex-direction: column;
     text-align: left;
-    /* justify-content: space-between; <-- ESTA LINHA FOI REMOVIDA */
+    /* justify-content: space-between; (Removido na última rodada, mantém-se removido) */
 }
 
 .item-details h3 {
@@ -670,8 +670,41 @@ header {
     .close-btn { display: block; }
     .mobile-cart-btn { display: block; }
 
-    /*
-     * Conforme solicitado, as regras de layout dos itens do menu no mobile
-     * foram removidas para usar o padrão "desktop" (card vertical com rolagem).
-    */
+    /* ===== AQUI ESTÃO AS CORREÇÕES FINAIS ===== */
+    
+    #menu-container {
+        grid-template-columns: 1fr; /* Força uma única coluna */
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .menu-item {
+        flex-direction: row; /* Imagem à esquerda, texto à direita */
+        align-items: flex-start; /* Alinha ambos ao topo */
+        padding: 0.8rem;
+        min-height: 90px; /* Garante altura mínima (tamanho da imagem) */
+        box-sizing: border-box; /* Garante que o padding não afete a altura */
+    }
+
+    .menu-item img {
+        width: 90px;
+        height: 90px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        flex-shrink: 0; /* Impede a imagem de encolher */
+        margin-right: 1rem;
+        border-radius: 8px;
+        background-color: #f0f0f0; /* Cor de placeholder se a imagem falhar */
+    }
+
+    .item-details {
+        padding: 0; /* O padding agora está no .menu-item */
+        flex-grow: 1; /* Ocupa o espaço restante */
+        min-width: 0; /* CORREÇÃO CRÍTICA: Permite a quebra de linha do texto */
+        justify-content: flex-start; /* Alinha o conteúdo ao topo */
+    }
+
+    .item-details h3, .item-details .description {
+        word-break: break-word; /* Garante a quebra de palavras longas */
+    }
 }
