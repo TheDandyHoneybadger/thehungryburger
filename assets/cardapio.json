@@ -49,6 +49,14 @@
   },
   {
     "id": 7,
+    "nome": "The Test",
+    "descricao": "sdf",
+    "preco": 1.41,
+    "categoria": "The Hamburgers",
+    "imageUrl": "images/The Test.webp"
+  },
+  {
+    "id": 8,
     "nome": "The Batata",
     "descricao": "200 gramas de batata crocante",
     "preco": 7.5,
@@ -56,7 +64,7 @@
     "imageUrl": "images/The Batata.webp"
   },
   {
-    "id": 8,
+    "id": 9,
     "nome": "The Big Box of Batata",
     "descricao": "asd",
     "preco": 14.9,
@@ -64,7 +72,7 @@
     "imageUrl": "images/The Big Box of Batata.webp"
   },
   {
-    "id": 9,
+    "id": 10,
     "nome": "The Salgadinho",
     "descricao": "Salgadinhos sortidos crocantes e deliciosos",
     "preco": 12.0,
@@ -72,7 +80,7 @@
     "imageUrl": "images/The Salgadinho.webp"
   },
   {
-    "id": 10,
+    "id": 11,
     "nome": "Coca-Cola 250ml",
     "descricao": "",
     "preco": 3.49,
@@ -80,7 +88,7 @@
     "imageUrl": "images/Coca-Cola 250ml.webp"
   },
   {
-    "id": 11,
+    "id": 12,
     "nome": "Coca-Zero 250ml",
     "descricao": "",
     "preco": 3.49,
@@ -88,7 +96,7 @@
     "imageUrl": "images/Coca-Zero 250ml.webp"
   },
   {
-    "id": 12,
+    "id": 13,
     "nome": "Pepsi 200ml",
     "descricao": "",
     "preco": 2.99,
@@ -96,7 +104,7 @@
     "imageUrl": "images/Pepsi 200ml.webp"
   },
   {
-    "id": 13,
+    "id": 14,
     "nome": "Coca-Cola Lata",
     "descricao": "",
     "preco": 4.99,
@@ -104,7 +112,7 @@
     "imageUrl": "images/Coca-Cola Lata.webp"
   },
   {
-    "id": 14,
+    "id": 15,
     "nome": "São Gerardo Caju Lata",
     "descricao": "",
     "preco": 4.99,
@@ -112,7 +120,7 @@
     "imageUrl": "images/São Gerardo Caju Lata.webp"
   },
   {
-    "id": 15,
+    "id": 16,
     "nome": "Heineken Long Neck 330ml",
     "descricao": "",
     "preco": 9.99,
@@ -120,7 +128,7 @@
     "imageUrl": "images/Heineken Long Neck 330ml.webp"
   },
   {
-    "id": 16,
+    "id": 17,
     "nome": "The Brownie",
     "descricao": "",
     "preco": 4.99,
@@ -128,7 +136,7 @@
     "imageUrl": "images/The Brownie.webp"
   },
   {
-    "id": 17,
+    "id": 18,
     "nome": "The Brownie of Chocolate",
     "descricao": "",
     "preco": 5.99,
@@ -136,7 +144,7 @@
     "imageUrl": "images/The Brownie of Chocolate.webp"
   },
   {
-    "id": 18,
+    "id": 19,
     "nome": "The Brownie of Ninho",
     "descricao": "",
     "preco": 5.99,
@@ -144,7 +152,7 @@
     "imageUrl": "images/The Brownie of Ninho.webp"
   },
   {
-    "id": 19,
+    "id": 20,
     "nome": "The Maionese da Casa",
     "descricao": "",
     "preco": 1.0,
@@ -152,7 +160,7 @@
     "imageUrl": "images/The Maionese da Casa.webp"
   },
   {
-    "id": 20,
+    "id": 21,
     "nome": "Bacon",
     "descricao": "",
     "preco": 4.0,
@@ -160,7 +168,7 @@
     "imageUrl": "images/Bacon.webp"
   },
   {
-    "id": 21,
+    "id": 22,
     "nome": "Ovo",
     "descricao": "",
     "preco": 2.0,
@@ -168,7 +176,7 @@
     "imageUrl": "images/Ovo.webp"
   },
   {
-    "id": 22,
+    "id": 23,
     "nome": "Carne",
     "descricao": "",
     "preco": 5.0,
@@ -176,7 +184,7 @@
     "imageUrl": "images/Carne.webp"
   },
   {
-    "id": 23,
+    "id": 24,
     "nome": "Queijo",
     "descricao": "",
     "preco": 3.0,
