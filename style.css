@@ -679,7 +679,7 @@ header {
         flex-direction: row; 
         align-items: flex-start; 
         padding: 0.8rem;
-        min-height: 110px;
+        min-height: 150px;
         box-sizing: border-box; 
     }
 
