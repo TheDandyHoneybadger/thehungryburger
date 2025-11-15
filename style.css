@@ -676,13 +676,14 @@ header {
     }
     .menu-item {
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start; /* AJUSTE: Alinha itens ao topo */
         padding: 0.5rem;
     }
     .menu-item img {
-        width: 100px;
-        height: auto; /* Altura automática para manter proporção */
-        aspect-ratio: 16 / 9;
+        width: 90px; /* AJUSTE: Tamanho da imagem */
+        height: 90px; /* AJUSTE: Força altura quadrada */
+        aspect-ratio: 1 / 1; /* AJUSTE: Proporção quadrada */
+        object-fit: cover; /* AJUSTE: Evita distorção da imagem */
         flex-shrink: 0;
         margin-right: 1rem;
         border-radius: 8px;
@@ -691,7 +692,7 @@ header {
         padding: 0.5rem 0;
         flex-grow: 1; 
         min-width: 0;
-        justify-content: flex-start; /* CORREÇÃO: Alinha o texto ao topo */
+        justify-content: flex-start; /* Mantém alinhamento interno do texto */
     }
     .item-details h3, .item-details .description {
         word-break: break-word;
