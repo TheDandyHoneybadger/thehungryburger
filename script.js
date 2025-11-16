@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let itemsByCategory = {};
     let deliveryFees = [];
     let currentModalItem = {};
+    // Variáveis para o Swipe
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const SWIPE_THRESHOLD = 50; // Mínimo de pixels para considerar um swipe
 
     // --- FUNÇÕES DE INICIALIZAÇÃO E CACHE ---
     async function initializeApp() {
@@ -47,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCartFromCache();
         updateCartDisplay();
         setupTabDragging();
+        setupSwipeNavigation(); // Adiciona o listener de swipe
     }
 
     function saveCartToCache() {
@@ -650,6 +655,56 @@ document.addEventListener('DOMContentLoaded', () => {
             slider.scrollLeft = scrollLeft - walk;
         });
     }
+
+    // --- FUNÇÕES DE NAVEGAÇÃO POR SWIPE ---
+    function setupSwipeNavigation() {
+        // Registra o ponto de início do toque
+        menuContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        // Registra o ponto final e calcula o gesto
+        menuContainer.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            handleSwipeGesture(touchEndX, touchEndY);
+        });
+    }
+
+    function handleSwipeGesture(touchEndX, touchEndY) {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        // Verifica se o movimento foi mais horizontal do que vertical
+        // E se ultrapassou o limite mínimo (SWIPE_THRESHOLD)
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
+            
+            const currentActiveTab = categoryTabsContainer.querySelector('.category-tab.active');
+            if (!currentActiveTab) return; // Se não houver aba ativa, não faz nada
+
+            if (deltaX < 0) {
+                // Swipe para a ESQUERDA (próxima aba)
+                const nextTab = currentActiveTab.nextElementSibling;
+                // Verifica se a próxima aba existe e é uma 'category-tab'
+                if (nextTab && nextTab.classList.contains('category-tab')) {
+                    nextTab.click(); // Simula o clique na próxima aba
+                }
+            } else {
+                // Swipe para a DIREITA (aba anterior)
+                const prevTab = currentActiveTab.previousElementSibling;
+                // Verifica se a aba anterior existe e é uma 'category-tab'
+                if (prevTab && prevTab.classList.contains('category-tab')) {
+                    prevTab.click(); // Simula o clique na aba anterior
+                }
+            }
+        }
+
+        // Reseta os valores para o próximo toque
+        touchStartX = 0;
+        touchStartY = 0;
+    }
+
 
     // --- EVENT LISTENERS ---
     menuContainer.addEventListener('click', (e) => {
