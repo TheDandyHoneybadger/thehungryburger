@@ -44,9 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartX = 0;
     let touchStartY = 0;
     const SWIPE_THRESHOLD = 50; // Mínimo de pixels para considerar um swipe
+    const FADE_DURATION = 150; // Duração do fade (em ms)
 
     // --- FUNÇÕES DE INICIALIZAÇÃO E CACHE ---
     async function initializeApp() {
+        // Adiciona a propriedade de transição ao container do menu para o fade
+        menuContainer.style.transition = `opacity ${FADE_DURATION}ms ease-out`;
+
         await fetchAndSetupMenu();
         loadCartFromCache();
         updateCartDisplay();
@@ -149,19 +153,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÕES DO CARDÁPIO ---
     function renderMenuItems(categoryName) {
-        menuContainer.innerHTML = '';
-        menuContainer.style.display = 'grid'; 
-        const itemsToRender = itemsByCategory[categoryName] || [];
-        itemsToRender.forEach(item => {
-            const itemElement = document.createElement('div');
-            itemElement.className = 'menu-item';
-            itemElement.dataset.id = item.id;
-            const imageUrlWithCacheBuster = `${item.imageUrl}?v=${new Date().getTime()}`;
-            itemElement.innerHTML = `
-                <img src="${imageUrlWithCacheBuster}" alt="${item.nome}" onerror="this.style.display='none'">
-                <div class="item-details"><h3>${item.nome}</h3><p class="description">${item.descricao}</p><p class="price">R$ ${item.preco.toFixed(2)}</p></div>`;
-            menuContainer.appendChild(itemElement);
-        });
+        // 1. Inicia o fade-out
+        menuContainer.style.opacity = 0;
+
+        // 2. Espera a animação de fade-out terminar
+        setTimeout(() => {
+            // 3. Troca o conteúdo (enquanto está invisível)
+            menuContainer.innerHTML = '';
+            menuContainer.style.display = 'grid'; 
+            const itemsToRender = itemsByCategory[categoryName] || [];
+            itemsToRender.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'menu-item';
+                itemElement.dataset.id = item.id;
+                const imageUrlWithCacheBuster = `${item.imageUrl}?v=${new Date().getTime()}`;
+                itemElement.innerHTML = `
+                    <img src="${imageUrlWithCacheBuster}" alt="${item.nome}" onerror="this.style.display='none'">
+                    <div class="item-details"><h3>${item.nome}</h3><p class="description">${item.descricao}</p><p class="price">R$ ${item.preco.toFixed(2)}</p></div>`;
+                menuContainer.appendChild(itemElement);
+            });
+
+            // 4. Inicia o fade-in
+            menuContainer.style.opacity = 1;
+        }, FADE_DURATION);
     }
 
     async function fetchAndSetupMenu() {
@@ -187,6 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
                     tabButton.classList.add('active');
                     renderMenuItems(categoryName);
+                    
+                    // --- ATUALIZAÇÃO ---
+                    // Anima a barra de abas para centralizar a aba ativa
+                    tabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 });
                 categoryTabsContainer.appendChild(tabButton);
             });
@@ -198,6 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
                 historyTab.classList.add('active');
                 renderOrderHistory();
+
+                // --- ATUALIZAÇÃO ---
+                // Anima a barra de abas para centralizar a aba ativa
+                historyTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             });
             categoryTabsContainer.appendChild(historyTab);
 
@@ -544,37 +566,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderOrderHistory() {
-        menuContainer.innerHTML = '';
-        menuContainer.style.display = 'block'; 
-        const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
+        // 1. Inicia o fade-out
+        menuContainer.style.opacity = 0;
+        
+        // 2. Espera a animação de fade-out terminar
+        setTimeout(() => {
+            // 3. Troca o conteúdo
+            menuContainer.innerHTML = '';
+            menuContainer.style.display = 'block'; 
+            const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
 
-        if (history.length === 0) {
-            menuContainer.innerHTML = '<div class="loading-container"><p class="loading">Nenhum pedido recente encontrado.</p></div>';
-        } else {
-            history.forEach((order, index) => {
-                const orderElement = document.createElement('div');
-                orderElement.className = 'history-item';
-                
-                let itemsHtml = '';
-                order.items.forEach(item => {
-                    itemsHtml += `<li>${item.quantity}x ${item.name}`;
-                    if (item.extras && item.extras.length > 0) {
-                        itemsHtml += ` <i>(${item.extras.join(', ')})</i>`;
-                    }
-                    itemsHtml += `</li>`;
+            if (history.length === 0) {
+                menuContainer.innerHTML = '<div class="loading-container"><p class="loading">Nenhum pedido recente encontrado.</p></div>';
+            } else {
+                history.forEach((order, index) => {
+                    const orderElement = document.createElement('div');
+                    orderElement.className = 'history-item';
+                    
+                    let itemsHtml = '';
+                    order.items.forEach(item => {
+                        itemsHtml += `<li>${item.quantity}x ${item.name}`;
+                        if (item.extras && item.extras.length > 0) {
+                            itemsHtml += ` <i>(${item.extras.join(', ')})</i>`;
+                        }
+                        itemsHtml += `</li>`;
+                    });
+
+                    orderElement.innerHTML = `
+                        <div class="history-item-details">
+                           <h3>Pedido de ${order.date}</h3>
+                           <ul class="history-item-products">${itemsHtml}</ul>
+                           <p class="price">Total: R$ ${order.total.toFixed(2)}</p>
+                        </div>
+                    `;
+                    orderElement.addEventListener('click', () => repeatOrder(index));
+                    menuContainer.appendChild(orderElement);
                 });
+            }
 
-                orderElement.innerHTML = `
-                    <div class="history-item-details">
-                       <h3>Pedido de ${order.date}</h3>
-                       <ul class="history-item-products">${itemsHtml}</ul>
-                       <p class="price">Total: R$ ${order.total.toFixed(2)}</p>
-                    </div>
-                `;
-                orderElement.addEventListener('click', () => repeatOrder(index));
-                menuContainer.appendChild(orderElement);
-            });
-        }
+            // 4. Inicia o fade-in
+            menuContainer.style.opacity = 1;
+        }, FADE_DURATION);
     }
     
     function repeatOrder(orderIndex) {
