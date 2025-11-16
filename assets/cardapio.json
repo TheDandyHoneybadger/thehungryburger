@@ -11,7 +11,7 @@
     "id": 2,
     "nome": "The Hamburger",
     "descricao": "asd",
-    "preco": 14.9,
+    "preco": 15.0,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Hamburger.webp"
   },
@@ -19,7 +19,7 @@
     "id": 3,
     "nome": "The Salada",
     "descricao": "asd",
-    "preco": 15.9,
+    "preco": 17.0,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Salada.webp"
   },
@@ -27,7 +27,7 @@
     "id": 4,
     "nome": "The Cheddar",
     "descricao": "asd",
-    "preco": 16.9,
+    "preco": 17.0,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Cheddar.webp"
   },
@@ -35,7 +35,7 @@
     "id": 5,
     "nome": "The Egg",
     "descricao": "asd",
-    "preco": 16.9,
+    "preco": 17.0,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Egg.webp"
   },
@@ -43,7 +43,7 @@
     "id": 6,
     "nome": "The Bacon",
     "descricao": "asd",
-    "preco": 16.9,
+    "preco": 17.0,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Bacon.webp"
   },
@@ -51,7 +51,7 @@
     "id": 7,
     "nome": "The Test",
     "descricao": "sdf",
-    "preco": 1.41,
+    "preco": 17.0,
     "categoria": "The Hamburgers",
     "imageUrl": "images/The Test.webp"
   },
