@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURAÇÕES DE CATEGORIAS ---
     const CATEGORIES_FOR_MODAL_OPTIONS = ['Adicionais', 'Acompanhamentos', 'Bebidas', 'Molhos'];
     const CATEGORIES_TO_HIDE_FROM_TABS = ['Adicionais', 'Molhos'];
@@ -813,3 +813,4 @@ document.addEventListener('DOMContentLoaded', () => {
     
     initializeApp();
 });
+s
