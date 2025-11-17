@@ -168,15 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 itemElement.dataset.id = item.id;
                 const imageUrlWithCacheBuster = `${item.imageUrl}?v=${new Date().getTime()}`;
                 
-                // --- CORREÇÃO IMPORTANTE AQUI ---
-                // Só cria o <p class="description"> se a descrição existir.
-                const descriptionHtml = item.descricao ? `<p class="description">${item.descricao}</p>` : '';
-                
+                // --- CORREÇÃO (REVERSÃO) ---
+                // Voltamos a criar o <p> sempre, como você pediu
                 itemElement.innerHTML = `
                     <img src="${imageUrlWithCacheBuster}" alt="${item.nome}" onerror="this.style.display='none'">
                     <div class="item-details">
                         <h3>${item.nome}</h3>
-                        ${descriptionHtml}
+                        <p class="description">${item.descricao || ''}</p>
                         <p class="price">R$ ${item.preco.toFixed(2)}</p>
                     </div>`;
                 // --- FIM DA CORREÇÃO ---
