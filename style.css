@@ -683,9 +683,9 @@ header {
     /* Itens viram lista (layout de linha) */
     .menu-item {
         flex-direction: row; 
-        align-items: flex-start; 
+        align-items: stretch; /* CORREÇÃO: Alinha os filhos (img e text) para terem a mesma altura */
         padding: 0.8rem;
-        min-height: 150px; /* Sua altura preferida */
+        /* min-height: 150px; <-- REMOVIDO: Deixa o conteúdo definir a altura */
         box-sizing: border-box; 
     }
 
@@ -705,12 +705,9 @@ header {
         flex-grow: 1; 
         min-width: 0; 
         justify-content: flex-start; 
-        
-        /* --- CORREÇÃO ADICIONADA --- */
         display: flex;
         flex-direction: column;
-        align-self: stretch; /* Faz o container de texto esticar */
-        /* --- FIM DA CORREÇÃO --- */
+        /* align-self: stretch; <-- REMOVIDO: O pai (align-items: stretch) já cuida disso */
     }
 
     .item-details h3, .item-details .description {
@@ -724,6 +721,15 @@ header {
     .item-details .description {
         margin-bottom: 0.4rem; 
         font-size: 0.85rem; 
+    }
+    
+    /* Regra para a descrição "vazia" pedida */
+    .item-details .description:empty {
+        margin: 0;
+        padding: 0;
+        /* Isso cria o "espaço de uma linha" que você pediu */
+        line-height: 1.2; 
+        font-size: 0.85rem;
     }
 
     .item-details .price {
