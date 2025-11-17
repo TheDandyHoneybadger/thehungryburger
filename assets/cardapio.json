@@ -82,7 +82,7 @@
   {
     "id": 11,
     "nome": "Coca-Cola 250ml",
-    "descricao": ".",
+    "descricao": "",
     "preco": 3.49,
     "categoria": "Bebidas",
     "imageUrl": "images/Coca-Cola 250ml.webp"
@@ -90,7 +90,7 @@
   {
     "id": 12,
     "nome": "Coca-Zero 250ml",
-    "descricao": ".",
+    "descricao": "",
     "preco": 3.49,
     "categoria": "Bebidas",
     "imageUrl": "images/Coca-Zero 250ml.webp"
