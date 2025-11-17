@@ -683,9 +683,9 @@ header {
     /* Itens viram lista (layout de linha) */
     .menu-item {
         flex-direction: row; 
-        align-items: flex-start; 
+        align-items: center; /* <<< CORREÇÃO 1: Alinha o texto ao centro da imagem */
         padding: 0.8rem;
-        min-height: 150px; /* Sua altura preferida */
+        /* min-height: 150px; */ /* <<< CORREÇÃO 2: Removido */
         box-sizing: border-box; 
     }
 
@@ -705,12 +705,9 @@ header {
         flex-grow: 1; 
         min-width: 0; 
         justify-content: flex-start; 
-        
-        /* --- CORREÇÃO ADICIONADA --- */
         display: flex;
         flex-direction: column;
         align-self: stretch; /* Faz o container de texto esticar */
-        /* --- FIM DA CORREÇÃO --- */
     }
 
     .item-details h3, .item-details .description {
