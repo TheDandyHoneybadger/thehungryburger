@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeOptionsModal() {
         productModal.classList.remove('visible');
-        if (!cartContainer.classList.contains('mobile-visible') && !checkoutModal.classList.contains('visible')) {
+        if (!cartContainer.classList.contains('visible') && !checkoutModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
     }
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeCheckoutModal() {
         checkoutModal.classList.remove('visible');
-        if (!cartContainer.classList.contains('mobile-visible') && !productModal.classList.contains('visible')) {
+        if (!cartContainer.classList.contains('visible') && !productModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
     }
@@ -647,12 +647,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA DE ABERTURA/FECHAMENTO DE OVERLAYS ---
-    function showCartMobile() {
-        cartContainer.classList.add('mobile-visible');
+    
+    // ATUALIZAÇÃO: Renomeada de 'showCartMobile' para 'showCart'
+    function showCart() {
+        cartContainer.classList.add('visible'); // ATUALIZAÇÃO: usa a classe '.visible'
         modalBackdrop.classList.add('visible');
     }
-    function hideCartMobile() {
-        cartContainer.classList.remove('mobile-visible');
+    // ATUALIZAÇÃO: Renomeada de 'hideCartMobile' para 'hideCart'
+    function hideCart() {
+        cartContainer.classList.remove('visible'); // ATUALIZAÇÃO: usa a classe '.visible'
         if (!productModal.classList.contains('visible') && !checkoutModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
@@ -783,12 +786,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     productModal.querySelector('#modal-add-to-cart-btn').addEventListener('click', addToCartFromModal);
 
-    mobileCartButton.addEventListener('click', showCartMobile);
-    closeCartButton.addEventListener('click', hideCartMobile);
+    // ATUALIZAÇÃO: Event listeners agora usam as funções renomeadas
+    mobileCartButton.addEventListener('click', showCart);
+    closeCartButton.addEventListener('click', hideCart);
 
     modalBackdrop.addEventListener('click', () => {
         if (productModal.classList.contains('visible')) closeOptionsModal();
-        if (cartContainer.classList.contains('mobile-visible')) hideCartMobile();
+        if (cartContainer.classList.contains('visible')) hideCart(); // ATUALIZAÇÃO
         if (checkoutModal.classList.contains('visible')) closeCheckoutModal();
     });
 
