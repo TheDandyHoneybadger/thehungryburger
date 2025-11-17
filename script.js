@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeOptionsModal() {
         productModal.classList.remove('visible');
-        if (!cartContainer.classList.contains('visible') && !checkoutModal.classList.contains('visible')) {
+        if (!cartContainer.classList.contains('mobile-visible') && !checkoutModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
     }
@@ -167,9 +167,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 itemElement.className = 'menu-item';
                 itemElement.dataset.id = item.id;
                 const imageUrlWithCacheBuster = `${item.imageUrl}?v=${new Date().getTime()}`;
+                
+                // --- CORREÇÃO IMPORTANTE AQUI ---
+                // Só cria o <p class="description"> se a descrição existir.
+                const descriptionHtml = item.descricao ? `<p class="description">${item.descricao}</p>` : '';
+                
                 itemElement.innerHTML = `
                     <img src="${imageUrlWithCacheBuster}" alt="${item.nome}" onerror="this.style.display='none'">
-                    <div class="item-details"><h3>${item.nome}</h3><p class="description">${item.descricao}</p><p class="price">R$ ${item.preco.toFixed(2)}</p></div>`;
+                    <div class="item-details">
+                        <h3>${item.nome}</h3>
+                        ${descriptionHtml}
+                        <p class="price">R$ ${item.preco.toFixed(2)}</p>
+                    </div>`;
+                // --- FIM DA CORREÇÃO ---
+                
                 menuContainer.appendChild(itemElement);
             });
 
@@ -364,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeCheckoutModal() {
         checkoutModal.classList.remove('visible');
-        if (!cartContainer.classList.contains('visible') && !productModal.classList.contains('visible')) {
+        if (!cartContainer.classList.contains('mobile-visible') && !productModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
     }
@@ -647,15 +658,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA DE ABERTURA/FECHAMENTO DE OVERLAYS ---
-    
-    // ATUALIZAÇÃO: Renomeada de 'showCartMobile' para 'showCart'
-    function showCart() {
-        cartContainer.classList.add('visible'); // ATUALIZAÇÃO: usa a classe '.visible'
+    function showCartMobile() {
+        cartContainer.classList.add('mobile-visible');
         modalBackdrop.classList.add('visible');
     }
-    // ATUALIZAÇÃO: Renomeada de 'hideCartMobile' para 'hideCart'
-    function hideCart() {
-        cartContainer.classList.remove('visible'); // ATUALIZAÇÃO: usa a classe '.visible'
+    function hideCartMobile() {
+        cartContainer.classList.remove('mobile-visible');
         if (!productModal.classList.contains('visible') && !checkoutModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
@@ -786,13 +794,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     productModal.querySelector('#modal-add-to-cart-btn').addEventListener('click', addToCartFromModal);
 
-    // ATUALIZAÇÃO: Event listeners agora usam as funções renomeadas
-    mobileCartButton.addEventListener('click', showCart);
-    closeCartButton.addEventListener('click', hideCart);
+    mobileCartButton.addEventListener('click', showCartMobile);
+    closeCartButton.addEventListener('click', hideCartMobile);
 
     modalBackdrop.addEventListener('click', () => {
         if (productModal.classList.contains('visible')) closeOptionsModal();
-        if (cartContainer.classList.contains('visible')) hideCart(); // ATUALIZAÇÃO
+        if (cartContainer.classList.contains('mobile-visible')) hideCartMobile();
         if (checkoutModal.classList.contains('visible')) closeCheckoutModal();
     });
 
