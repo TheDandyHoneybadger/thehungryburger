@@ -203,6 +203,8 @@ header {
     font-weight: bold;
     color: #d92525; /* Vermelho da logo */
     font-size: 1.3rem;
+    /* Adicionado para garantir que o preço fique no fundo do card desktop */
+    margin-top: auto; 
 }
 
 /* Estilo para os itens do histórico */
@@ -643,7 +645,6 @@ header {
 }
 
 /* Responsividade */
-/* ATUALIZAÇÃO: Breakpoint alterado para 1200px */
 @media (max-width: 1200px) {
     .contact-info {
         font-size: 0.7rem;
@@ -719,4 +720,12 @@ header {
         margin-bottom: 0.4rem; 
         font-size: 0.85rem; 
     }
+
+    /* --- CORREÇÃO: Esta regra estava faltando --- */
+    .item-details .price {
+        margin-top: auto; /* Empurra o preço para baixo */
+        align-self: flex-end; /* Alinha o preço à direita */
+        padding-top: 0.5rem; /* Adiciona um espaço */
+    }
+    /* --- FIM DA CORREÇÃO --- */
 }
