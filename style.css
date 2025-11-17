@@ -203,7 +203,6 @@ header {
     font-weight: bold;
     color: #d92525; /* Vermelho da logo */
     font-size: 1.3rem;
-    /* Adicionado para garantir que o preço fique no fundo do card desktop */
     margin-top: auto; 
 }
 
@@ -706,6 +705,12 @@ header {
         flex-grow: 1; 
         min-width: 0; 
         justify-content: flex-start; 
+        
+        /* --- CORREÇÃO ADICIONADA --- */
+        display: flex;
+        flex-direction: column;
+        align-self: stretch; /* Faz o container de texto esticar */
+        /* --- FIM DA CORREÇÃO --- */
     }
 
     .item-details h3, .item-details .description {
@@ -721,11 +726,9 @@ header {
         font-size: 0.85rem; 
     }
 
-    /* --- CORREÇÃO: Esta regra estava faltando --- */
     .item-details .price {
         margin-top: auto; /* Empurra o preço para baixo */
         align-self: flex-end; /* Alinha o preço à direita */
         padding-top: 0.5rem; /* Adiciona um espaço */
     }
-    /* --- FIM DA CORREÇÃO --- */
 }
