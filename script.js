@@ -448,7 +448,7 @@
         }
 
         // --- Variáveis de Contato (Para o Bot) ---
-        const numeroWhatsApp = '5585999999999';
+        const numeroWhatsApp = '5585982236022';
         const nomeLoja = "The Hungry Burger";
         
         const userInfo = {
