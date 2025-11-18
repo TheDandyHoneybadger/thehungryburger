@@ -48,9 +48,6 @@
 
     // --- FUNÇÕES DE INICIALIZAÇÃO E CACHE ---
     async function initializeApp() {
-        // Adiciona a propriedade de transição ao container do menu para o fade
-        // Esta regra agora é controlada pelo style.css para garantir
-        
         await fetchAndSetupMenu();
         loadCartFromCache();
         updateCartDisplay();
@@ -371,7 +368,7 @@
 
     function closeCheckoutModal() {
         checkoutModal.classList.remove('visible');
-        if (!cartContainer.classList.contains('mobile-visible') && !productModal.classList.contains('visible')) {
+        if (!cartContainer.classList.contains('mobile-visible') && !checkoutModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
     }
@@ -445,6 +442,22 @@
             trocoGroup.style.display = 'none';
         }
     }
+    
+    // --- FUNÇÕES DE PROTOCOLO ---
+    const sanitizeProtocolStr = (str) => {
+        if (!str) return 'N/A';
+        // Remove acentos e caracteres especiais, mantendo apenas letras e números (para nomes/endereços simples)
+        let sanitized = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        sanitized = sanitized.replace(/[^a-zA-Z0-9]/g, ''); 
+        if (sanitized === '') return 'N/A';
+        return sanitized;
+    };
+
+    const formatPriceForProtocol = (price) => {
+        // Garante duas casas decimais e usa ponto como separador decimal
+        return price.toFixed(2).replace(',', '.'); 
+    };
+    // --- FIM FUNÇÕES DE PROTOCOLO ---
 
     async function handleConfirmOrder(e) {
         e.preventDefault();
@@ -453,7 +466,7 @@
             return;
         }
 
-        const numeroWhatsApp = '5585982236022';
+        const numeroWhatsApp = '5585999999999';
         const nomeLoja = "The Hungry Burger";
         
         const userInfo = {
@@ -480,20 +493,20 @@
 
         saveOrderToHistory(cart, total);
 
-        // --- CORREÇÃO: Emojis trocados por Códigos Unicode ---
+        // --- Geração da Mensagem com Emojis Unicode ---
         const paymentEmojis = {
-            'Dinheiro': '\uD83D\uDCB5', // 💵
-            'Pix (Pagamento Online)': '\uD83D\uDCA0', // 💠
-            'Cartão (Pagamento Online)': '\uD83D\uDCB3', // 💳
-            'Cartão (Pagamento Presencial)': '\uD83D\uDCB3' // 💳
+            'Dinheiro': '\uD83D\uDCB5', 
+            'Pix (Pagamento Online)': '\uD83D\uDCA0', 
+            'Cartão (Pagamento Online)': '\uD83D\uDCB3', 
+            'Cartão (Pagamento Presencial)': '\uD83D\uDCB3' 
         };
-        const paymentEmoji = paymentEmojis[paymentMethod] || '\uD83D\uDCB3'; // 💳
+        const paymentEmoji = paymentEmojis[paymentMethod] || '\uD83D\uDCB3'; 
 
-        let mensagem = `\u2728 *Novo Pedido Chegando!* \u2728\n\n`; // ✨
+        let mensagem = `\u2728 *Novo Pedido Chegando!* \u2728\n\n`; 
         mensagem += `Olá, *${nomeLoja}*!\n`;
         mensagem += `Gostaria de confirmar meu pedido:\n\n`;
 
-        mensagem += `\uD83C\uDF54 *RESUMO DO PEDIDO*\n`; // 🍔
+        mensagem += `\uD83C\uDF54 *RESUMO DO PEDIDO*\n`; 
         cart.forEach(item => {
             const itemTotalPrice = (item.product.preco + item.extras.reduce((acc, extra) => acc + extra.preco, 0)) * item.quantity;
             mensagem += `*${item.quantity}x ${item.product.nome}* (R$ ${itemTotalPrice.toFixed(2)})\n`;
@@ -512,7 +525,7 @@
             mensagem += `*Cupom Aplicado:* ${couponCode}\n`;
         }
         
-        mensagem += `\uD83D\uDCB0 *TOTAL (sem desconto): R$ ${total.toFixed(2)}*\n\n`; // 💰
+        mensagem += `\uD83D\uDCB0 *TOTAL (sem desconto): R$ ${total.toFixed(2)}*\n\n`; 
 
         mensagem += `${paymentEmoji} *FORMA DE PAGAMENTO*\n`;
         mensagem += `Pagamento em ${paymentMethod}\n`;
@@ -522,7 +535,7 @@
         mensagem += `\n`;
 
         if (deliveryType === 'delivery') {
-            mensagem += `\uD83D\uDCCD *DADOS PARA ENTREGA*\n`; // 📍
+            mensagem += `\uD83D\uDCCD *DADOS PARA ENTREGA*\n`; 
             mensagem += `Nome: ${userInfo.nome}\n`;
             mensagem += `Endereço: ${userInfo.rua}\n`;
             mensagem += `Bairro: ${userInfo.bairro}\n`;
@@ -532,14 +545,45 @@
             mensagem += `WhatsApp: ${userInfo.telefone}\n`;
         } else {
             const pickupTime = pickupTimeInput.value;
-            mensagem += `\uD83D\uDEB6 *RETIRADA NO BALCÃO*\n`; // 🚶
+            mensagem += `\uD83D\uDEB6 *RETIRADA NO BALCÃO*\n`; 
             mensagem += `Nome: ${userInfo.nome}\n`;
             mensagem += `WhatsApp: ${userInfo.telefone}\n`;
             if (pickupTime) {
                 mensagem += `*Hora para Retirada:* ${pickupTime}\n`;
             }
         }
-        // --- FIM DA CORREÇÃO DE EMOJIS ---
+        
+        // --- INÍCIO: MONTAGEM DO PROTOCOLO DE RASTREAMENTO ---
+        
+        // 1. PRODUCTS DATA STRING (1xTheOne@21.99|2xTheCheddar@40.00)
+        const productsData = cart.map(item => {
+            // Soma o preço base do produto com o preço dos adicionais.
+            const itemPriceUnit = item.product.preco + item.extras.reduce((extraAcc, extra) => extraAcc + extra.preco, 0);
+            
+            // Sanitiza nome do produto.
+            const productName = sanitizeProtocolStr(item.product.nome);
+            const quantity = item.quantity;
+            const totalItemPrice = formatPriceForProtocol(itemPriceUnit * quantity);
+            
+            return `${quantity}x${productName}@${totalItemPrice}`;
+        }).join('|');
+
+        // 2. USER DATA STRING
+        const nomeProtocol = sanitizeProtocolStr(userInfo.nome);
+        const ruaProtocol = sanitizeProtocolStr(userInfo.rua || 'NaoInformado');
+        const bairroProtocol = sanitizeProtocolStr(userInfo.bairro || 'NaoInformado');
+        const referenciaProtocol = userInfo.complemento ? sanitizeProtocolStr(userInfo.complemento) : 'NaoInformado';
+        
+        // 3. TAXA
+        const taxaProtocol = formatPriceForProtocol(taxaEntrega);
+        
+        // 4. PROTOCOL STRING ASSEMBLY
+        const protocolString = `\n\n##PEDIDO_ENC##${productsData}_${taxaProtocol}-${nomeProtocol}-${ruaProtocol}-${bairroProtocol}-${referenciaProtocol}`;
+        
+        // Adiciona a string do protocolo à mensagem
+        mensagem += protocolString;
+
+        // --- FIM: MONTAGEM DO PROTOCOLO DE RASTREAMENTO ---
 
         const mensagemCodificada = encodeURIComponent(mensagem);
         
