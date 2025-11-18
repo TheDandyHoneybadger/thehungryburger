@@ -542,7 +542,7 @@
         }
 
         const mensagemCodificada = encodeURIComponent(mensagem);
-        const urlWhatsApp = `https://web.whatsapp.com/send/?phone={numeroWhatsApp}?text=${mensagemCodificada}`;
+        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
 
         window.open(urlWhatsApp, '_blank');
         
