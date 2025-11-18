@@ -44,7 +44,7 @@
     let touchStartX = 0;
     let touchStartY = 0;
     const SWIPE_THRESHOLD = 50; // Mínimo de pixels para considerar um swipe
-    const FADE_DURATION = 300; // Duração do fade (em ms) - Aumentado para 300ms
+    const FADE_DURATION = 300; // Duração do fade (em ms)
 
     // --- FUNÇÕES DE INICIALIZAÇÃO E CACHE ---
     async function initializeApp() {
@@ -52,7 +52,7 @@
         loadCartFromCache();
         updateCartDisplay();
         setupTabDragging();
-        setupSwipeNavigation(); // Adiciona o listener de swipe
+        setupSwipeNavigation();
     }
 
     function saveCartToCache() {
@@ -157,7 +157,6 @@
         setTimeout(() => {
             // 3. Troca o conteúdo (enquanto está invisível)
             menuContainer.innerHTML = '';
-            // Garante que o display seja grid para o layout de produtos
             menuContainer.style.display = 'grid'; 
             
             const itemsToRender = itemsByCategory[categoryName] || [];
@@ -208,7 +207,6 @@
                     tabButton.classList.add('active');
                     renderMenuItems(categoryName);
                     
-                    // Anima a barra de abas para centralizar a aba ativa
                     tabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 });
                 categoryTabsContainer.appendChild(tabButton);
@@ -222,7 +220,6 @@
                 historyTab.classList.add('active');
                 renderOrderHistory();
 
-                // Anima a barra de abas para centralizar a aba ativa
                 historyTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             });
             categoryTabsContainer.appendChild(historyTab);
@@ -368,7 +365,7 @@
 
     function closeCheckoutModal() {
         checkoutModal.classList.remove('visible');
-        if (!cartContainer.classList.contains('mobile-visible') && !checkoutModal.classList.contains('visible')) {
+        if (!cartContainer.classList.contains('mobile-visible') && !productModal.classList.contains('visible')) {
             modalBackdrop.classList.remove('visible');
         }
     }
@@ -442,22 +439,6 @@
             trocoGroup.style.display = 'none';
         }
     }
-    
-    // --- FUNÇÕES DE PROTOCOLO ---
-    const sanitizeProtocolStr = (str) => {
-        if (!str) return 'N/A';
-        // Remove acentos e caracteres especiais, mantendo apenas letras e números (para nomes/endereços simples)
-        let sanitized = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        sanitized = sanitized.replace(/[^a-zA-Z0-9]/g, ''); 
-        if (sanitized === '') return 'N/A';
-        return sanitized;
-    };
-
-    const formatPriceForProtocol = (price) => {
-        // Garante duas casas decimais e usa ponto como separador decimal
-        return price.toFixed(2).replace(',', '.'); 
-    };
-    // --- FIM FUNÇÕES DE PROTOCOLO ---
 
     async function handleConfirmOrder(e) {
         e.preventDefault();
@@ -466,7 +447,8 @@
             return;
         }
 
-        const numeroWhatsApp = '5585982236022';
+        // --- Variáveis de Contato (Para o Bot) ---
+        const numeroWhatsApp = '5585999999999';
         const nomeLoja = "The Hungry Burger";
         
         const userInfo = {
@@ -493,20 +475,25 @@
 
         saveOrderToHistory(cart, total);
 
-        // --- Geração da Mensagem com Emojis Unicode ---
+        // --- Emojis em Códigos Unicode (Garante UTF-8) ---
         const paymentEmojis = {
-            'Dinheiro': '\uD83D\uDCB5', 
-            'Pix (Pagamento Online)': '\uD83D\uDCA0', 
-            'Cartão (Pagamento Online)': '\uD83D\uDCB3', 
-            'Cartão (Pagamento Presencial)': '\uD83D\uDCB3' 
+            'Dinheiro': '\uD83D\uDCB5', // 💵
+            'Pix (Pagamento Online)': '\uD83D\uDCA0', // 💠
+            'Cartão (Pagamento Online)': '\uD83D\uDCB3', // 💳
+            'Cartão (Pagamento Presencial)': '\uD83D\uDCB3' // 💳
         };
         const paymentEmoji = paymentEmojis[paymentMethod] || '\uD83D\uDCB3'; 
 
-        let mensagem = `\u2728 *Novo Pedido Chegando!* \u2728\n\n`; 
+        // --- Montagem da Mensagem para o Bot (Estrutura Exata) ---
+        // \n para quebra de linha. *...* para negrito.
+
+        let mensagem = `\u2728 *Novo Pedido Chegando!* \u2728\n\n`; // ✨
+
         mensagem += `Olá, *${nomeLoja}*!\n`;
         mensagem += `Gostaria de confirmar meu pedido:\n\n`;
 
-        mensagem += `\uD83C\uDF54 *RESUMO DO PEDIDO*\n`; 
+        mensagem += `\uD83C\uDF54 *RESUMO DO PEDIDO*\n`; // 🍔
+        
         cart.forEach(item => {
             const itemTotalPrice = (item.product.preco + item.extras.reduce((acc, extra) => acc + extra.preco, 0)) * item.quantity;
             mensagem += `*${item.quantity}x ${item.product.nome}* (R$ ${itemTotalPrice.toFixed(2)})\n`;
@@ -516,7 +503,9 @@
                 });
             }
         });
+
         mensagem += `\nSubtotal: R$ ${subtotal.toFixed(2)}\n`;
+        
         if (deliveryType === 'delivery') {
             mensagem += `Taxa de Entrega: R$ ${taxaEntrega.toFixed(2)}\n`;
         }
@@ -525,17 +514,19 @@
             mensagem += `*Cupom Aplicado:* ${couponCode}\n`;
         }
         
-        mensagem += `\uD83D\uDCB0 *TOTAL (sem desconto): R$ ${total.toFixed(2)}*\n\n`; 
+        mensagem += `\uD83D\uDCB0 *TOTAL (sem desconto): R$ ${total.toFixed(2)}*\n\n`; // 💰
 
         mensagem += `${paymentEmoji} *FORMA DE PAGAMENTO*\n`;
         mensagem += `Pagamento em ${paymentMethod}\n`;
+        
         if (paymentMethod === 'Dinheiro' && userInfo.troco) {
             mensagem += `(Troco para: R$ ${userInfo.troco})\n`;
         }
-        mensagem += `\n`;
+        
+        mensagem += `\n`; // Quebra de linha após o pagamento
 
         if (deliveryType === 'delivery') {
-            mensagem += `\uD83D\uDCCD *DADOS PARA ENTREGA*\n`; 
+            mensagem += `\uD83D\uDCCD *DADOS PARA ENTREGA*\n`; // 📍
             mensagem += `Nome: ${userInfo.nome}\n`;
             mensagem += `Endereço: ${userInfo.rua}\n`;
             mensagem += `Bairro: ${userInfo.bairro}\n`;
@@ -545,49 +536,18 @@
             mensagem += `WhatsApp: ${userInfo.telefone}\n`;
         } else {
             const pickupTime = pickupTimeInput.value;
-            mensagem += `\uD83D\uDEB6 *RETIRADA NO BALCÃO*\n`; 
+            mensagem += `\uD83D\uDEB6 *RETIRADA NO BALCÃO*\n`; // 🚶
             mensagem += `Nome: ${userInfo.nome}\n`;
             mensagem += `WhatsApp: ${userInfo.telefone}\n`;
             if (pickupTime) {
                 mensagem += `*Hora para Retirada:* ${pickupTime}\n`;
             }
         }
-        
-        // --- INÍCIO: MONTAGEM DO PROTOCOLO DE RASTREAMENTO ---
-        
-        // 1. PRODUCTS DATA STRING (1xTheOne@21.99|2xTheCheddar@40.00)
-        const productsData = cart.map(item => {
-            // Soma o preço base do produto com o preço dos adicionais.
-            const itemPriceUnit = item.product.preco + item.extras.reduce((extraAcc, extra) => extraAcc + extra.preco, 0);
-            
-            // Sanitiza nome do produto.
-            const productName = sanitizeProtocolStr(item.product.nome);
-            const quantity = item.quantity;
-            const totalItemPrice = formatPriceForProtocol(itemPriceUnit * quantity);
-            
-            return `${quantity}x${productName}@${totalItemPrice}`;
-        }).join('|');
-
-        // 2. USER DATA STRING
-        const nomeProtocol = sanitizeProtocolStr(userInfo.nome);
-        const ruaProtocol = sanitizeProtocolStr(userInfo.rua || 'NaoInformado');
-        const bairroProtocol = sanitizeProtocolStr(userInfo.bairro || 'NaoInformado');
-        const referenciaProtocol = userInfo.complemento ? sanitizeProtocolStr(userInfo.complemento) : 'NaoInformado';
-        
-        // 3. TAXA
-        const taxaProtocol = formatPriceForProtocol(taxaEntrega);
-        
-        // 4. PROTOCOL STRING ASSEMBLY
-        const protocolString = `\n\n##PEDIDO_ENC##${productsData}_${taxaProtocol}-${nomeProtocol}-${ruaProtocol}-${bairroProtocol}-${referenciaProtocol}`;
-        
-        // Adiciona a string do protocolo à mensagem
-        mensagem += protocolString;
-
-        // --- FIM: MONTAGEM DO PROTOCOLO DE RASTREAMENTO ---
+        // --- Fim da Montagem da Mensagem ---
 
         const mensagemCodificada = encodeURIComponent(mensagem);
         
-        // --- MUDANÇA: Alterado para web.whatsapp.com ---
+        // --- MUDANÇA: URL para web.whatsapp.com ---
         const urlWhatsApp = `https://web.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensagemCodificada}`;
         // --- FIM DA MUDANÇA ---
 
@@ -601,7 +561,20 @@
         closeCheckoutModal();
     }
 
-    // --- FUNÇÕES DO HISTÓRICO DE PEDIDOS ---
+    // --- LÓGICA DE EVENTOS (RESTANTE DO SCRIPT) ---
+    function showCartMobile() {
+        cartContainer.classList.add('mobile-visible');
+        modalBackdrop.classList.add('visible');
+    }
+    function hideCartMobile() {
+        cartContainer.classList.remove('mobile-visible');
+        if (!productModal.classList.contains('visible') && !checkoutModal.classList.contains('visible')) {
+            modalBackdrop.classList.remove('visible');
+        }
+    }
+    
+    // ... (restante das funções: saveOrderToHistory, renderOrderHistory, repeatOrder, setupTabDragging, setupSwipeNavigation e Event Listeners)
+
     function saveOrderToHistory(orderCart, orderTotal) {
         const order = {
             date: new Date().toLocaleString('pt-BR'),
@@ -622,14 +595,10 @@
     }
 
     function renderOrderHistory() {
-        // 1. Inicia o fade-out
         menuContainer.style.opacity = 0;
-        
-        // 2. Espera a animação de fade-out terminar
         setTimeout(() => {
-            // 3. Troca o conteúdo
             menuContainer.innerHTML = '';
-            menuContainer.style.display = 'block'; // Display 'block' para o histórico
+            menuContainer.style.display = 'block'; 
             const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
 
             if (history.length === 0) {
@@ -659,8 +628,6 @@
                     menuContainer.appendChild(orderElement);
                 });
             }
-
-            // 4. Inicia o fade-in
             menuContainer.style.opacity = 1;
         }, FADE_DURATION);
     }
@@ -702,19 +669,6 @@
         }
     }
 
-    // --- LÓGICA DE ABERTURA/FECHAMENTO DE OVERLAYS ---
-    function showCartMobile() {
-        cartContainer.classList.add('mobile-visible');
-        modalBackdrop.classList.add('visible');
-    }
-    function hideCartMobile() {
-        cartContainer.classList.remove('mobile-visible');
-        if (!productModal.classList.contains('visible') && !checkoutModal.classList.contains('visible')) {
-            modalBackdrop.classList.remove('visible');
-        }
-    }
-
-    // --- LÓGICA PARA ARRASTAR AS ABAS ---
     function setupTabDragging() {
         const slider = categoryTabsContainer;
         let isDown = false;
@@ -744,15 +698,12 @@
         });
     }
 
-    // --- FUNÇÕES DE NAVEGAÇÃO POR SWIPE ---
     function setupSwipeNavigation() {
-        // Registra o ponto de início do toque
         menuContainer.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
         }, { passive: true });
 
-        // Registra o ponto final e calcula o gesto
         menuContainer.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
@@ -764,31 +715,24 @@
         const deltaX = touchEndX - touchStartX;
         const deltaY = touchEndY - touchStartY;
 
-        // Verifica se o movimento foi mais horizontal do que vertical
-        // E se ultrapassou o limite mínimo (SWIPE_THRESHOLD)
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
             
             const currentActiveTab = categoryTabsContainer.querySelector('.category-tab.active');
-            if (!currentActiveTab) return; // Se não houver aba ativa, não faz nada
+            if (!currentActiveTab) return; 
 
             if (deltaX < 0) {
-                // Swipe para a ESQUERDA (próxima aba)
                 const nextTab = currentActiveTab.nextElementSibling;
-                // Verifica se a próxima aba existe e é uma 'category-tab'
                 if (nextTab && nextTab.classList.contains('category-tab')) {
-                    nextTab.click(); // Simula o clique na próxima aba
+                    nextTab.click(); 
                 }
             } else {
-                // Swipe para a DIREITA (aba anterior)
                 const prevTab = currentActiveTab.previousElementSibling;
-                // Verifica se a aba anterior existe e é uma 'category-tab'
                 if (prevTab && prevTab.classList.contains('category-tab')) {
-                    prevTab.click(); // Simula o clique na aba anterior
+                    prevTab.click(); 
                 }
             }
         }
 
-        // Reseta os valores para o próximo toque
         touchStartX = 0;
         touchStartY = 0;
     }
