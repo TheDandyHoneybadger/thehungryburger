@@ -44,13 +44,13 @@
     let touchStartX = 0;
     let touchStartY = 0;
     const SWIPE_THRESHOLD = 50; // Mínimo de pixels para considerar um swipe
-    const FADE_DURATION = 150; // Duração do fade (em ms)
+    const FADE_DURATION = 300; // Duração do fade (em ms) - Aumentado para 300ms
 
     // --- FUNÇÕES DE INICIALIZAÇÃO E CACHE ---
     async function initializeApp() {
         // Adiciona a propriedade de transição ao container do menu para o fade
-        menuContainer.style.transition = `opacity ${FADE_DURATION}ms ease-out`;
-
+        // Esta regra agora é controlada pelo style.css para garantir
+        
         await fetchAndSetupMenu();
         loadCartFromCache();
         updateCartDisplay();
@@ -153,14 +153,16 @@
 
     // --- FUNÇÕES DO CARDÁPIO ---
     function renderMenuItems(categoryName) {
-        // 1. Inicia o fade-out
+        // 1. Inicia o fade-out (opacity 0)
         menuContainer.style.opacity = 0;
 
         // 2. Espera a animação de fade-out terminar
         setTimeout(() => {
             // 3. Troca o conteúdo (enquanto está invisível)
             menuContainer.innerHTML = '';
+            // Garante que o display seja grid para o layout de produtos
             menuContainer.style.display = 'grid'; 
+            
             const itemsToRender = itemsByCategory[categoryName] || [];
             itemsToRender.forEach(item => {
                 const itemElement = document.createElement('div');
@@ -168,8 +170,7 @@
                 itemElement.dataset.id = item.id;
                 const imageUrlWithCacheBuster = `${item.imageUrl}?v=${new Date().getTime()}`;
                 
-                // --- CORREÇÃO (REVERSÃO) ---
-                // Voltamos a criar o <p> sempre, como você pediu
+                // Cria o <p> sempre, como pedido (o CSS cuida do 'min-height')
                 itemElement.innerHTML = `
                     <img src="${imageUrlWithCacheBuster}" alt="${item.nome}" onerror="this.style.display='none'">
                     <div class="item-details">
@@ -177,12 +178,11 @@
                         <p class="description">${item.descricao || ''}</p>
                         <p class="price">R$ ${item.preco.toFixed(2)}</p>
                     </div>`;
-                // --- FIM DA CORREÇÃO ---
                 
                 menuContainer.appendChild(itemElement);
             });
 
-            // 4. Inicia o fade-in
+            // 4. Inicia o fade-in (opacity 1)
             menuContainer.style.opacity = 1;
         }, FADE_DURATION);
     }
@@ -211,7 +211,6 @@
                     tabButton.classList.add('active');
                     renderMenuItems(categoryName);
                     
-                    // --- ATUALIZAÇÃO ---
                     // Anima a barra de abas para centralizar a aba ativa
                     tabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 });
@@ -226,7 +225,6 @@
                 historyTab.classList.add('active');
                 renderOrderHistory();
 
-                // --- ATUALIZAÇÃO ---
                 // Anima a barra de abas para centralizar a aba ativa
                 historyTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             });
@@ -482,19 +480,20 @@
 
         saveOrderToHistory(cart, total);
 
+        // --- CORREÇÃO: Emojis trocados por Códigos Unicode ---
         const paymentEmojis = {
-            'Dinheiro': '💵',
-            'Pix (Pagamento Online)': '💠',
-            'Cartão (Pagamento Online)': '💳',
-            'Cartão (Pagamento Presencial)': '💳'
+            'Dinheiro': '\uD83D\uDCB5', // 💵
+            'Pix (Pagamento Online)': '\uD83D\uDCA0', // 💠
+            'Cartão (Pagamento Online)': '\uD83D\uDCB3', // 💳
+            'Cartão (Pagamento Presencial)': '\uD83D\uDCB3' // 💳
         };
-        const paymentEmoji = paymentEmojis[paymentMethod] || '💳';
+        const paymentEmoji = paymentEmojis[paymentMethod] || '\uD83D\uDCB3'; // 💳
 
-        let mensagem = `✨ *Novo Pedido Chegando!* ✨\n\n`;
+        let mensagem = `\u2728 *Novo Pedido Chegando!* \u2728\n\n`; // ✨
         mensagem += `Olá, *${nomeLoja}*!\n`;
         mensagem += `Gostaria de confirmar meu pedido:\n\n`;
 
-        mensagem += `🍔 *RESUMO DO PEDIDO*\n`;
+        mensagem += `\uD83C\uDF54 *RESUMO DO PEDIDO*\n`; // 🍔
         cart.forEach(item => {
             const itemTotalPrice = (item.product.preco + item.extras.reduce((acc, extra) => acc + extra.preco, 0)) * item.quantity;
             mensagem += `*${item.quantity}x ${item.product.nome}* (R$ ${itemTotalPrice.toFixed(2)})\n`;
@@ -513,7 +512,7 @@
             mensagem += `*Cupom Aplicado:* ${couponCode}\n`;
         }
         
-        mensagem += `💰 *TOTAL (sem desconto): R$ ${total.toFixed(2)}*\n\n`;
+        mensagem += `\uD83D\uDCB0 *TOTAL (sem desconto): R$ ${total.toFixed(2)}*\n\n`; // 💰
 
         mensagem += `${paymentEmoji} *FORMA DE PAGAMENTO*\n`;
         mensagem += `Pagamento em ${paymentMethod}\n`;
@@ -523,7 +522,7 @@
         mensagem += `\n`;
 
         if (deliveryType === 'delivery') {
-            mensagem += `📍 *DADOS PARA ENTREGA*\n`;
+            mensagem += `\uD83D\uDCCD *DADOS PARA ENTREGA*\n`; // 📍
             mensagem += `Nome: ${userInfo.nome}\n`;
             mensagem += `Endereço: ${userInfo.rua}\n`;
             mensagem += `Bairro: ${userInfo.bairro}\n`;
@@ -533,16 +532,20 @@
             mensagem += `WhatsApp: ${userInfo.telefone}\n`;
         } else {
             const pickupTime = pickupTimeInput.value;
-            mensagem += `🚶‍♂️ *RETIRADA NO BALCÃO*\n`;
+            mensagem += `\uD83D\uDEB6 *RETIRADA NO BALCÃO*\n`; // 🚶
             mensagem += `Nome: ${userInfo.nome}\n`;
             mensagem += `WhatsApp: ${userInfo.telefone}\n`;
             if (pickupTime) {
                 mensagem += `*Hora para Retirada:* ${pickupTime}\n`;
             }
         }
+        // --- FIM DA CORREÇÃO DE EMOJIS ---
 
         const mensagemCodificada = encodeURIComponent(mensagem);
-        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
+        
+        // --- MUDANÇA: Alterado para web.whatsapp.com ---
+        const urlWhatsApp = `https://web.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensagemCodificada}`;
+        // --- FIM DA MUDANÇA ---
 
         window.open(urlWhatsApp, '_blank');
         
@@ -582,7 +585,7 @@
         setTimeout(() => {
             // 3. Troca o conteúdo
             menuContainer.innerHTML = '';
-            menuContainer.style.display = 'block'; 
+            menuContainer.style.display = 'block'; // Display 'block' para o histórico
             const history = JSON.parse(localStorage.getItem('orderHistory')) || [];
 
             if (history.length === 0) {
@@ -813,4 +816,3 @@
     
     initializeApp();
 });
-s
